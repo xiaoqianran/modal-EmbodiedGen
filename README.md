@@ -22,6 +22,13 @@
 
 ---
 
+## Modal production fork
+
+This fork keeps the upstream EmbodiedGen source layout intact. Modal-specific build, runtime,
+control-plane, environment, patch, and regression-test code lives under [`modal/`](modal/README.md).
+The current validated Modal production baseline remains pinned to EmbodiedGen v2.0.0 until the
+v2.1.0 fork baseline is separately revalidated.
+
 ## ✨ What's New in V2
 
 - 💬 **3D Vibe Coding** — build and edit sim-ready scenes through natural-language dialogue via Claude Code slash commands (`/embodiedgen:*`), each edit a bounded, physics-validated skill call.
