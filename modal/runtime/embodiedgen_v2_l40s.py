@@ -1,4 +1,4 @@
-"""EmbodiedGen v2.0.0 L40S release-consumer runtime.
+"""EmbodiedGen v2.1.0 L40S release-consumer runtime.
 
 This file intentionally uses nvidia/cuda:*runtime* (not devel): nvcc is absent.
 All expensive CUDA artifacts are consumed from the modal-build GitHub Release.
@@ -14,10 +14,10 @@ from pathlib import Path
 
 import modal
 
-TAG = "embodiedgen-v2.0.0-py310-cu126-torch280-sm89-v1"
-RELEASE = f"https://github.com/xiaoqianran/modal-build/releases/download/{TAG}"
+BINARY_RELEASE_TAG = "embodiedgen-v2.0.0-py310-cu126-torch280-sm89-v1"
+BINARY_RELEASE = f"https://github.com/xiaoqianran/modal-build/releases/download/{BINARY_RELEASE_TAG}"
 APP_NAME = "modal-3d-embodiedgen"
-EMBODIEDGEN_COMMIT = "cc3015ca5ccdacf94df3428d9e65f79375982216"
+EMBODIEDGEN_COMMIT = "f0124197888c2b733e4eaa65acd81ad9cfda3b79"
 CLIP_COMMIT = "d05afc436d78f1c48dc0dbf8e5980a9d471f35f6"
 KOLORS_COMMIT = "c59c0aa67587e472de657bc9f4f9c18272c94165"
 RELEASE_WHEELS_SHA256 = "4168abccbc9a0033825e3ad8b9a9e992795f6449107adf357a4dd4acafec398c"
@@ -949,7 +949,7 @@ image = (
         "python -m pip install --upgrade 'pip>=25' setuptools==80.10.2 wheel packaging 'Cython>=0.29.37'",
         "python -m pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu126",
         "python -m pip install xformers==0.0.32.post2 --index-url https://download.pytorch.org/whl/cu126",
-        "printf 'numpy==1.26.4\\nopencv-python==4.11.0.86\\nopencv-python-headless==4.11.0.86\\npillow<12\\n' >/tmp/eg-constraints.txt",
+        "printf 'numpy==1.26.4\\nopencv-python==4.9.0.80\\nopencv-python-headless==4.9.0.80\\npillow<12\\n' >/tmp/eg-constraints.txt",
         "cd /workspace/EmbodiedGen && PIP_CONSTRAINT=/tmp/eg-constraints.txt python -m pip install -r requirements.txt --use-deprecated=legacy-resolver",
     )
     .run_commands(
@@ -959,7 +959,7 @@ image = (
         f"python -m pip install --no-deps 'kolors@git+https://github.com/HochCC/Kolors.git@{KOLORS_COMMIT}'",
         "python -m pip install --no-deps 'MoGe@git+https://github.com/microsoft/MoGe.git@a8c3734'",
         "PIP_CONSTRAINT=/tmp/eg-constraints.txt python -m pip install plyfile moderngl glcontext ftfy fvcore iopath",
-        "python -m pip install --force-reinstall --no-deps numpy==1.26.4 opencv-python==4.11.0.86 opencv-python-headless==4.11.0.86 'pillow<12'",
+        "python -m pip install --force-reinstall --no-deps numpy==1.26.4 opencv-python==4.9.0.80 opencv-python-headless==4.9.0.80 'pillow<12'",
         "python -m pip install --no-deps kaolin==0.18.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.8.0_cu126.html",
         "python -m pip install pygltflib warp-lang usd-core ipycanvas ipyevents 'jupyter_client<8' tornado",
         "python -m pip install --no-deps gsplat==1.5.3",
@@ -967,8 +967,8 @@ image = (
     )
     # Consume release artifacts: no source builds.
     .run_commands(
-        f"mkdir -p /opt/embodiedgen-release/wheels /root/.cache/torch_extensions && curl -fL '{RELEASE}/{TAG}.wheels.zip' -o /tmp/wheels.zip",
-        f"curl -fL '{RELEASE}/{TAG}.torch-extensions.zip' -o /tmp/ext.zip",
+        f"mkdir -p /opt/embodiedgen-release/wheels /root/.cache/torch_extensions && curl -fL '{BINARY_RELEASE}/{BINARY_RELEASE_TAG}.wheels.zip' -o /tmp/wheels.zip",
+        f"curl -fL '{BINARY_RELEASE}/{BINARY_RELEASE_TAG}.torch-extensions.zip' -o /tmp/ext.zip",
         f"echo '{RELEASE_WHEELS_SHA256}  /tmp/wheels.zip' | sha256sum -c -",
         f"echo '{RELEASE_EXTENSIONS_SHA256}  /tmp/ext.zip' | sha256sum -c -",
         "unzip -q /tmp/wheels.zip -d /opt/embodiedgen-release/wheels",
@@ -982,9 +982,9 @@ image = (
 # Apply only the validated headless/source patches after all packages are installed.
 image = (
     image
-    .add_local_file("modal/patches/embodiedgen-v2.0.0/production/headless-l40s.patch", "/tmp/headless-l40s.patch", copy=True)
+    .add_local_file("modal/patches/embodiedgen-v2.1.0/production/headless-l40s.patch", "/tmp/headless-l40s.patch", copy=True)
     .add_local_file(
-        "modal/patches/embodiedgen-v2.0.0/production/retexture-lazy-delight.patch",
+        "modal/patches/embodiedgen-v2.1.0/production/retexture-lazy-delight.patch",
         "/tmp/retexture-lazy-delight.patch",
         copy=True,
     )
@@ -1002,12 +1002,12 @@ image = (
 image = (
     image
     .add_local_file(
-        "modal/patches/embodiedgen-v2.0.0/production/patch_nvdiffrast_init_release.py",
+        "modal/patches/embodiedgen-v2.1.0/production/patch_nvdiffrast_init_release.py",
         "/tmp/patch_nvdiffrast_init_release.py",
         copy=True,
     )
     .add_local_file(
-        "modal/patches/embodiedgen-v2.0.0/production/gsplat_backend_release.py",
+        "modal/patches/embodiedgen-v2.1.0/production/gsplat_backend_release.py",
         "/usr/local/lib/python3.10/site-packages/gsplat/cuda/_backend.py",
         copy=True,
     )

@@ -26,8 +26,8 @@
 
 This fork keeps the upstream EmbodiedGen source layout intact. Modal-specific build, runtime,
 control-plane, environment, patch, and regression-test code lives under [`modal/`](modal/README.md).
-The current validated Modal production baseline remains pinned to EmbodiedGen v2.0.0 until the
-v2.1.0 fork baseline is separately revalidated.
+The Modal production source now targets EmbodiedGen v2.1.0. See `modal/UPSTREAM.md` for the
+compatibility and validation status.
 
 ## ✨ What's New in V2
 

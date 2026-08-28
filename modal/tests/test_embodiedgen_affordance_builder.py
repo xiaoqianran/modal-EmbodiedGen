@@ -38,7 +38,7 @@ class AffordanceBuilderTest(unittest.TestCase):
 
 
     def test_p3sam_no_flash_patch_uses_upstream_fallback(self):
-        patch = ROOT / "patches" / "embodiedgen-v2.0.0" / "production" / "p3sam-no-flash.patch"
+        patch = ROOT / "patches" / "embodiedgen-v2.1.0" / "production" / "p3sam-no-flash.patch"
         body = patch.read_text(encoding="utf-8")
         self.assertIn('custom_config={"enable_flash": False}', body)
         self.assertIn('embodied_gen/utils/monkey_patch/p3sam.py', body)

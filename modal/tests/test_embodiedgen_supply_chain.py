@@ -34,7 +34,7 @@ class RuntimePinsTest(unittest.TestCase):
         self.assertIn("revision=RETEXTURE_MODEL_REVISION", source)
 
     def test_retexture_lazy_delight_patch_is_active(self):
-        patch = ROOT / "patches" / "embodiedgen-v2.0.0" / "production" / "retexture-lazy-delight.patch"
+        patch = ROOT / "patches" / "embodiedgen-v2.1.0" / "production" / "retexture-lazy-delight.patch"
         source = RUNTIME.read_text(encoding="utf-8")
         body = patch.read_text(encoding="utf-8")
         self.assertTrue(patch.is_file())

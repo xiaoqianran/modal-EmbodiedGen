@@ -77,3 +77,9 @@ AGENTS.md
 !docs/landing/**/*.html
 !docs/landing/**/*.mp4
 !docs/landing/**/*.json
+
+# Keep this fork's Modal integration build/environment sources tracked.
+!modal/build/
+!modal/build/*.py
+!modal/env/
+!modal/env/*.json

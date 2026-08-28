@@ -1,4 +1,4 @@
-# EmbodiedGen v2.0.0 patches
+# EmbodiedGen v2.1.0 patches
 
 `production/` contains the only patches/loaders used by the current production runtime in
 `runtime/embodiedgen_v2_l40s.py`, including the headless/no-JIT loaders and the Retexture lazy-Delight

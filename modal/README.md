@@ -1,10 +1,10 @@
-# EmbodiedGen v2.0.0 on Modal L40S
+# EmbodiedGen v2.1.0 on Modal L40S
 
-This target is a **release-consumer runtime** for `HorizonRobotics/EmbodiedGen@v2.0.0`.
+This target is a **release-consumer runtime** for `HorizonRobotics/EmbodiedGen@v2.1.0`.
 The runtime does not compile CUDA code. It uses `nvidia/cuda:12.6.3-runtime-ubuntu22.04`,
 and the image asserts that `nvcc` is absent.
 
-## Validated environment
+## Target environment
 
 | Component | Value |
 |---|---|
@@ -20,9 +20,9 @@ and the image asserts that `nvcc` is absent.
 | gsplat | 1.5.3, precompiled O3 SM89 extension |
 | PyTorch3D | 0.7.8 wheel, commit `75ebeeaea0908c5527e7b1e305fbc7681382db47` |
 | nvdiffrast | 0.3.3 wheel, commit `729261d`, precompiled SM89 CUDA plugin |
-| EmbodiedGen | v2.0.0, commit `cc3015ca5ccdacf94df3428d9e65f79375982216` |
+| EmbodiedGen | v2.1.0, commit `f0124197888c2b733e4eaa65acd81ad9cfda3b79` |
 
-Release: `embodiedgen-v2.0.0-py310-cu126-torch280-sm89-v1`.
+Binary ABI bundle reused from the previous validated release: `embodiedgen-v2.0.0-py310-cu126-torch280-sm89-v1`. The v2.1.0 source keeps the same Python/Torch/CUDA ABI and identical SAM3D/TRELLIS gitlinks; the bundle is reused without relabeling it as a v2.1.0 release.
 
 Release assets:
 
@@ -45,7 +45,7 @@ builder/validation path. It contains CUDA build steps and should not be used for
 
 ## Headless patches
 
-The validated patches are under `patches/embodiedgen-v2.0.0/`. They address headless/Modal issues
+The production patches are under `patches/embodiedgen-v2.1.0/`. They address headless/Modal issues
 without changing the SAM3D model weights:
 
 - bypass Hugging Face ZeroGPU decorators when a real Modal GPU is already allocated;
@@ -55,9 +55,9 @@ without changing the SAM3D model weights:
 - keep TRELLIS optional for a SAM3D-only runtime;
 - use a cost-safe validation profile for texture baking.
 
-The original end-to-end validation produced `VALIDATION_OK` with 95,004 PLY Gaussians,
+The historical v2.0.0 end-to-end baseline produced `VALIDATION_OK` with 95,004 PLY Gaussians,
 516,271 OBJ vertices, 891,420 OBJ faces, one valid GLB geometry, valid URDF mesh references,
-and a valid MP4.
+and a valid MP4. A fresh v2.1.0 Modal L40S E2E is required before the upgrade is marked production-validated.
 
 ## Build / cache behavior
 
@@ -71,7 +71,7 @@ error rather than silently compiling on an L40S. To rebuild CUDA artifacts, use
 The production consumer pins mutable Git sources to the exact commits observed in the validated
 image:
 
-- EmbodiedGen: `cc3015ca5ccdacf94df3428d9e65f79375982216` (`v2.0.0`);
+- EmbodiedGen: `f0124197888c2b733e4eaa65acd81ad9cfda3b79` (`v2.1.0`);
 - OpenAI CLIP: `d05afc436d78f1c48dc0dbf8e5980a9d471f35f6`;
 - Kolors: `c59c0aa67587e472de657bc9f4f9c18272c94165`.
 
@@ -1073,7 +1073,7 @@ storage/cold-start cost.
 
 The upstream `backproject_v2.py` eagerly imported `DelightingModel`; that transitively initialized
 segmentation/quality-check modules and printed `Using GPT model: ...` even when `delight=False`.
-`patches/embodiedgen-v2.0.0/production/retexture-lazy-delight.patch` changes this to a lazy import only
+`patches/embodiedgen-v2.1.0/production/retexture-lazy-delight.patch` changes this to a lazy import only
 inside the actual Delight branch. Condition rendering also uses `with_mtl=True` so the source UV/MTL
 bundle is honored. The post-fix E2E log contained zero GPT-init, missing-UV, traceback and OOM lines.
 
