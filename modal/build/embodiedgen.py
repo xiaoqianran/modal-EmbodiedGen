@@ -18,7 +18,7 @@ PINS = {
     "embodiedgen": "f0124197888c2b733e4eaa65acd81ad9cfda3b79",
     "embodiedgen_tag": "v2.1.0",
     "pytorch3d": "75ebeeaea0908c5527e7b1e305fbc7681382db47",
-    "nvdiffrast": "729261d",
+    "nvdiffrast": "729261dc64c4241ea36efda84fbf532cc8b425b8",
     "gsplat": "1.5.3",
     "kaolin": "0.18.0",
 }
@@ -85,6 +85,12 @@ def build_and_release() -> dict:
             "Bump TAG for a new release."
         )
 
+    # Modal may reuse a warm builder container after a failed invocation. Clear
+    # ephemeral build state so retries cannot inherit stale wheels, archives, caches,
+    # or a half-cloned source tree from the previous attempt.
+    scratch_paths = (WHEELS, OUT, CACHE_ROOT, Path("/tmp/nvdiffrast"))
+    for path in scratch_paths:
+        shutil.rmtree(path, ignore_errors=True)
     WHEELS.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     CACHE_ROOT.mkdir(parents=True, exist_ok=True)

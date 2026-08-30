@@ -68,6 +68,26 @@ class RuntimePinsTest(unittest.TestCase):
             self.assertIn("@", url.split("git+https://", 1)[1], url)
 
 
+class BuilderPinsTest(unittest.TestCase):
+    def test_nvdiffrast_uses_full_commit_sha(self):
+        source = BUILDER.read_text(encoding="utf-8")
+        match = re.search(r"\"nvdiffrast\": \"([0-9a-f]+)\"", source)
+        self.assertIsNotNone(match)
+        self.assertRegex(match.group(1), r"^[0-9a-f]{40}$")
+
+
+class BuilderRetrySafetyTest(unittest.TestCase):
+    def test_builder_clears_ephemeral_state_before_building(self):
+        source = BUILDER.read_text(encoding="utf-8")
+        build = source[source.index("def build_and_release") :]
+        self.assertIn("scratch_paths = (WHEELS, OUT, CACHE_ROOT, Path(\"/tmp/nvdiffrast\"))", build)
+        self.assertIn("shutil.rmtree(path, ignore_errors=True)", build)
+        self.assertLess(
+            build.index("for path in scratch_paths"),
+            build.index("git clone https://github.com/NVlabs/nvdiffrast.git"),
+        )
+
+
 class ImmutableReleaseTest(unittest.TestCase):
     def test_builder_never_clobbers_release_assets(self):
         source = BUILDER.read_text(encoding="utf-8")
